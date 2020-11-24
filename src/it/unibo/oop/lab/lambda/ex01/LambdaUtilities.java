@@ -1,11 +1,15 @@
 package it.unibo.oop.lab.lambda.ex01;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -58,10 +62,17 @@ public final class LambdaUtilities {
      *         otherwise.
      */
     public static <T> List<Optional<T>> optFilter(final List<T> list, final Predicate<T> pre) {
-        /*
-         * Suggestion: consider Optional.filter
-         */
-        return null;
+	List<Optional<T>> optFilter = new LinkedList<>();
+	
+	list.forEach(t -> {
+	    if(pre.test(t)) {
+		optFilter.add(Optional.of(t));
+	    } else {
+		optFilter.add(Optional.empty());
+	    }
+	    
+	});
+        return optFilter;
     }
 
     /**
@@ -77,10 +88,20 @@ public final class LambdaUtilities {
      *         based on the mapping done by the function
      */
     public static <R, T> Map<R, Set<T>> group(final List<T> list, final Function<T, R> op) {
-        /*
+        Map<R, Set<T>> group = new HashMap<>();        
+        
+        list.forEach(t -> {
+            group.merge(op.apply(t), new HashSet<>(Arrays.asList(t)), (t1, t2) -> {
+                t1.addAll(t2);
+                return t1;
+            	});
+       });
+        
+        
+	/*
          * Suggestion: consider Map.merge
          */
-        return null;
+        return group;
     }
 
     /**
@@ -111,6 +132,7 @@ public final class LambdaUtilities {
     public static void main(final String[] args) {
         final List<Integer> li = IntStream.range(1, 8).mapToObj(i -> Integer.valueOf(i)).collect(Collectors.toList());
         System.out.println(dup(li, x -> x + 100));
+        
         /*
          * [1, 101, 2, 102, 3, 103, 4, 104, 5, 105, 6, 106, 7, 107]
          */
