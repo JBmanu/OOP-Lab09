@@ -2,6 +2,7 @@ package it.unibo.oop.lab.lambda.ex01;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -42,6 +43,7 @@ public final class LambdaUtilities {
      *         a processed version
      */
     public static <T> List<T> dup(final List<T> list, final UnaryOperator<T> op) {
+    	
         final List<T> l = new ArrayList<>(list.size() * 2);
         list.forEach(t -> {
             l.add(t);
@@ -62,16 +64,16 @@ public final class LambdaUtilities {
      *         otherwise.
      */
     public static <T> List<Optional<T>> optFilter(final List<T> list, final Predicate<T> pre) {
-	List<Optional<T>> optFilter = new LinkedList<>();
-	
-	list.forEach(t -> {
-	    if(pre.test(t)) {
-		optFilter.add(Optional.of(t));
-	    } else {
-		optFilter.add(Optional.empty());
-	    }
-	    
-	});
+    	List<Optional<T>> optFilter = new ArrayList<>();
+    	
+    	list.forEach(t -> {
+    		if(pre.test(t)) {
+    			optFilter.add(Optional.of(t));
+    		} else {
+    			optFilter.add(Optional.empty());
+    		}
+    			
+    	});
         return optFilter;
     }
 
@@ -88,17 +90,13 @@ public final class LambdaUtilities {
      *         based on the mapping done by the function
      */
     public static <R, T> Map<R, Set<T>> group(final List<T> list, final Function<T, R> op) {
-        Map<R, Set<T>> group = new HashMap<>();        
-        
-        list.forEach(t -> {
-            group.merge(op.apply(t), new HashSet<>(Arrays.asList(t)), (t1, t2) -> {
-                t1.addAll(t2);
-                return t1;
-            	});
-       });
-        
-        
-	/*
+    	Map<R, Set<T>> group = new HashMap<>();        
+    	//new HashSet<>(Arrays.asList(t)) 
+    	list.forEach(t -> {
+    		group.merge(op.apply(t), new HashSet<T>() {{ add(t); }}, (set1, set2) -> { set1.addAll(set2); return set1;});
+    	});
+
+    	/*
          * Suggestion: consider Map.merge
          */
         return group;
@@ -117,12 +115,17 @@ public final class LambdaUtilities {
      *         by the supplier
      */
     public static <K, V> Map<K, V> fill(final Map<K, Optional<V>> map, final Supplier<V> def) {
+    	Map<K, V> fill = new HashMap<>();
+    	
+    	map.forEach((k, v) -> {
+			fill.put(k, v.orElse(def.get()));
+    	});
         /*
          * Suggestion: consider Optional.orElse
          * 
          * Keep in mind that a map can be iterated through its forEach method
          */
-        return null;
+        return fill;
     }
 
     /**
@@ -131,11 +134,11 @@ public final class LambdaUtilities {
      */
     public static void main(final String[] args) {
         final List<Integer> li = IntStream.range(1, 8).mapToObj(i -> Integer.valueOf(i)).collect(Collectors.toList());
-        System.out.println(dup(li, x -> x + 100));
-        
+        System.out.println(dup(li, x -> x + 100));  
         /*
          * [1, 101, 2, 102, 3, 103, 4, 104, 5, 105, 6, 106, 7, 107]
          */
+        
         System.out.println(group(li, x -> x % 2 == 0 ? "even" : "odd"));
         /*
          * {odd=[1, 3, 5, 7], even=[2, 4, 6]}

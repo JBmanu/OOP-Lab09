@@ -12,7 +12,6 @@ import java.util.stream.Stream;
  *
  */
 public final class MusicGroupImpl implements MusicGroup {
-
     private final Map<String, Integer> albums = new HashMap<>();
     private final Set<Song> songs = new HashSet<>();
 
@@ -31,11 +30,12 @@ public final class MusicGroupImpl implements MusicGroup {
 
     @Override
     public Stream<String> orderedSongNames() {
-        return null;
+    	return null;
     }
 
     @Override
     public Stream<String> albumNames() {
+    	
         return null;
     }
 
@@ -46,7 +46,7 @@ public final class MusicGroupImpl implements MusicGroup {
 
     @Override
     public int countSongs(final String albumName) {
-        return -1;
+    	return -1;
     }
 
     @Override
